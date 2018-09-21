@@ -1,4 +1,9 @@
-import deadpixel.keystone.*; //<>//
+import mqtt.*; //<>//
+import deadpixel.keystone.*;
+
+MQTTClient mqttClient;
+String commandTopic = "horizon/4/bridge/state";
+String stateTopic = "horizon/4/projection/state";
 
 Keystone ks;
 CornerPinSurface frontSurface;
@@ -25,6 +30,14 @@ String[] bottomImages = {
 
 int imgIndex = 0;
 
+String[] stateNames = {
+  "404",
+  "200 POWER LOSS",
+  "471 AIR SUPPLY",
+  "123 COMMUNICATION",
+  "ALL SYSTEMS ONLINE"
+};
+
 void setup() {
   // Keystone will only work with P3D or OPENGL renderers, 
   // since it relies on texture mapping to deform
@@ -49,7 +62,11 @@ void setup() {
   } catch(NullPointerException e) {
     ks.save();
   }
-    
+  
+  mqttClient = new MQTTClient(this);
+  mqttClient.connect("mqtt://192.168.100.40:1883", "processing-argame");
+  mqttClient.subscribe(commandTopic);
+  mqttClient.publish(stateTopic, stateNames[imgIndex]);
 }
 
 void draw() {
@@ -107,4 +124,19 @@ void keyPressed() {
     break;
     
   }
+}
+
+void messageReceived(String topic, byte[] payload) {
+  println("new message: " + topic + " - " + new String(payload));
+
+  if (new String(payload).contains("RESET")) {
+    imgIndex = 0;
+  }
+  else if (new String(payload).contains("STEP 0")) imgIndex = 0;
+  else if (new String(payload).contains("STEP 1")) imgIndex = 1;
+  else if (new String(payload).contains("STEP 2")) imgIndex = 2;
+  else if (new String(payload).contains("STEP 3")) imgIndex = 3;
+  else if (new String(payload).contains("DIALING")) imgIndex = 4;
+
+  mqttClient.publish(stateTopic, stateNames[imgIndex]);
 }
