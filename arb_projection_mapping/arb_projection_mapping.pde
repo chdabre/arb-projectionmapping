@@ -1,4 +1,4 @@
-import deadpixel.keystone.*;
+import deadpixel.keystone.*; //<>//
 
 Keystone ks;
 CornerPinSurface frontSurface;
@@ -12,6 +12,7 @@ String[] frontImages = {
   "Vorne 2.png",
   "Vorne 3.png",
   "Vorne 4.png",
+  "Vorne 5.png",
 };
 
 String[] bottomImages = {
@@ -19,6 +20,7 @@ String[] bottomImages = {
   "Unten 2.png",
   "Unten 3.png",
   "Unten 4.png",
+  "Unten 5.png",
 };
 
 int imgIndex = 0;
@@ -98,7 +100,7 @@ void keyPressed() {
     break;
   
   case 'm':
-    imgIndex++; //<>//
+    imgIndex++;
     if (imgIndex >= frontImages.length) {
       imgIndex = 0;
     }
