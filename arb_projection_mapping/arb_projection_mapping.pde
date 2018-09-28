@@ -150,9 +150,14 @@ void messageReceived(String topic, byte[] payload) {
 
   if (new String(payload).contains("RESET")) {
     skip = false;
+    timer = 0;
     imgIndex = 0;
   }
-  else if (new String(payload).contains("STEP 0")) imgIndex = 0;
+  else if (new String(payload).contains("STEP 0")) {
+    skip = false;
+    timer = 0;
+    imgIndex = 0;
+  }
   else if (new String(payload).contains("STEP 1")) imgIndex = 1;
   else if (new String(payload).contains("STEP 2")) imgIndex = 2;
   else if (new String(payload).contains("STEP 3")) imgIndex = 3;
