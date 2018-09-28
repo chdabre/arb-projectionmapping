@@ -149,6 +149,7 @@ void messageReceived(String topic, byte[] payload) {
   println("new message: " + topic + " - " + new String(payload));
 
   if (new String(payload).contains("RESET")) {
+    skip = false;
     imgIndex = 0;
   }
   else if (new String(payload).contains("STEP 0")) imgIndex = 0;
