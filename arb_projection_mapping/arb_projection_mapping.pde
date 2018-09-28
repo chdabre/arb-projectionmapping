@@ -12,11 +12,16 @@ CornerPinSurface bottomSurface;
 PGraphics frontGraphics;
 PGraphics bottomGraphics;
 
+boolean skip = false;
+long timer = 0;
+
 String[] frontImages = {
   "Vorne.png",
   "Vorne 2.png",
   "Vorne 3.png",
   "Vorne 4.png",
+  "Vorne 5.png",
+  "Vorne 5.png",
   "Vorne 5.png",
 };
 
@@ -26,6 +31,8 @@ String[] bottomImages = {
   "Unten 3.png",
   "Unten 4.png",
   "Unten 5.png",
+  "Unten 6.png",
+  "Unten 7.png",
 };
 
 int imgIndex = 0;
@@ -96,6 +103,12 @@ void draw() {
   // render the scene, transformed using the corner pin surface
   frontSurface.render(frontGraphics);
   bottomSurface.render(bottomGraphics);
+  
+  if ( skip && millis() - timer > 3000 ) {
+    imgIndex ++;
+    timer = millis();
+    if (imgIndex >= 6) skip = false;
+  }
 }
 
 void keyPressed() {
@@ -121,6 +134,12 @@ void keyPressed() {
     if (imgIndex >= frontImages.length) {
       imgIndex = 0;
     }
+    
+    if (imgIndex == 4) {
+      timer = millis();
+      skip = true;
+    }
+    
     break;
     
   }
@@ -136,7 +155,11 @@ void messageReceived(String topic, byte[] payload) {
   else if (new String(payload).contains("STEP 1")) imgIndex = 1;
   else if (new String(payload).contains("STEP 2")) imgIndex = 2;
   else if (new String(payload).contains("STEP 3")) imgIndex = 3;
-  else if (new String(payload).contains("DIALING")) imgIndex = 4;
+  else if (new String(payload).contains("DIALING")) {
+    imgIndex = 4;
+    timer = millis();
+    skip = true;
+  }
 
   mqttClient.publish(stateTopic, stateNames[imgIndex]);
 }
